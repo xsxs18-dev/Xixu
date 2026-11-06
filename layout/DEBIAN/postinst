@@ -7,9 +7,11 @@ for helper in /var/jb/usr/libexec/xixuhelper /usr/libexec/xixuhelper; do
     fi
 done
 
-for app in /var/jb/Applications/Xixu.app /Applications/Xixu.app; do
-    if [ -d "$app" ] && command -v uicache >/dev/null 2>&1; then
-        uicache -p "$app" >/dev/null 2>&1 || true
-    fi
-done
+if [ "${XIXU_SELF_UPDATE:-}" != "1" ]; then
+    for app in /var/jb/Applications/Xixu.app /Applications/Xixu.app; do
+        if [ -d "$app" ] && command -v uicache >/dev/null 2>&1; then
+            uicache -p "$app" >/dev/null 2>&1 || true
+        fi
+    done
+fi
 exit 0

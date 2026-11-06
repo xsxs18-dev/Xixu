@@ -121,6 +121,11 @@ enum Dispatcher {
             out.text = result.1
             out.numbers = [Int64(result.0)]
 
+        case "selfUpdate":
+            let result = Tools.selfUpdate(try path(), ctx: ctx)
+            out.text = result.1
+            out.numbers = [Int64(result.0)]
+
         case "uicache":
             let result = Tools.uicache()
             out.text = result.1

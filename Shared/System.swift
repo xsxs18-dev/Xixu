@@ -46,7 +46,7 @@ enum Tools {
         return nil
     }
 
-    static func run(_ argv: [String], ctx: OpContext? = nil) -> (status: Int32, output: String) {
+    static func run(_ argv: [String], ctx: OpContext? = nil, extraEnv: [String] = []) -> (status: Int32, output: String) {
         guard let exe = argv.first, access(exe, X_OK) == 0 else {
             return (-1, "\(argv.first ?? "?"): not found")
         }
@@ -64,7 +64,7 @@ enum Tools {
 
         let binDirs = ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin"]
         let path = (binDirs.map { JB.path($0) } + ["/usr/bin", "/bin", "/usr/sbin", "/sbin"]).joined(separator: ":")
-        let env = ["PATH=\(path)", "LANG=C", "LC_ALL=C", "HOME=/var/root", "DEBIAN_FRONTEND=noninteractive", "TERM=dumb"]
+        let env = ["PATH=\(path)", "LANG=C", "LC_ALL=C", "HOME=/var/root", "DEBIAN_FRONTEND=noninteractive", "TERM=dumb"] + extraEnv
 
         let cargv: [UnsafeMutablePointer<CChar>?] = argv.map { strdup($0) } + [nil]
         let cenv: [UnsafeMutablePointer<CChar>?] = env.map { strdup($0) } + [nil]
@@ -150,6 +150,12 @@ enum Tools {
         }
         guard let dpkg = find("dpkg") else { return (-1, "dpkg is not installed") }
         return run([dpkg, "-i", path], ctx: ctx)
+    }
+
+    /// Upgrade Xixu itself without re-registering its running app in postinst.
+    static func selfUpdate(_ path: String, ctx: OpContext) -> (Int32, String) {
+        guard let dpkg = find("dpkg") else { return (-1, "dpkg is not installed") }
+        return run([dpkg, "-i", path], ctx: ctx, extraEnv: ["XIXU_SELF_UPDATE=1"])
     }
 
     /// Control fields and file list of a .deb.

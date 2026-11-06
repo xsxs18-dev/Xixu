@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.5
+
+- Double tap the Files tab while browsing to return to its home page.
+- Added a compact in-app updater that checks the latest GitHub release, shows release notes, verifies the package checksum, and installs the matching rootless or roothide package.
+
 ## 1.1.4
 
 - Fixed the IPA installation crash shown in the iOS 18.4 crash report: activity updates now stay on the main actor, and the shelf never updates UIKit from a background thread.

@@ -11,6 +11,7 @@ extension Notification.Name {
     static let editingChanged = Notification.Name("XixuEditingChanged")
     static let bookmarksChanged = Notification.Name("XixuBookmarksChanged")
     static let appsLoaded = Notification.Name("XixuAppsLoaded")
+    static let updateChanged = Notification.Name("XixuUpdateChanged")
 }
 
 /// Tells open folders that their contents changed.

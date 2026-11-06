@@ -42,6 +42,8 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
     private var shelfShown = false
     private var toastView: ToastView?
     private var toastTimer: Timer?
+    private var lastSelectedTab: UIViewController?
+    private var lastFilesTap: TimeInterval = 0
 
     private(set) lazy var filesTabs = FilesTabsController(delegate: self)
     let searchNav = UINavigationController(rootViewController: SearchViewController())
@@ -69,6 +71,7 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
             nav.delegate = self
         }
         viewControllers = [filesTabs, searchNav, appsNav, toolsNav, settingsNav]
+        lastSelectedTab = filesTabs
 
         shelf.translatesAutoresizingMaskIntoConstraints = false
         shelf.alpha = 0
@@ -92,6 +95,11 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
         for name in [Notification.Name.clipboardChanged, .activityChanged, .editingChanged] {
             center.addObserver(self, selector: #selector(stateChanged), name: name, object: nil)
         }
+        center.addObserver(self, selector: #selector(updateChanged), name: .updateChanged, object: nil)
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            await UpdateManager.shared.check()
+        }
     }
 
     @objc private func stateChanged() {
@@ -106,7 +114,34 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        if viewController === filesTabs {
+            let now = ProcessInfo.processInfo.systemUptime
+            if lastSelectedTab === filesTabs && now - lastFilesTap < 0.4 {
+                filesNav.popToRootViewController(animated: true)
+                Haptics.tap()
+                lastFilesTap = 0
+            } else {
+                lastFilesTap = now
+            }
+        } else {
+            lastFilesTap = 0
+        }
+        lastSelectedTab = viewController
         updateShelf()
+    }
+
+    @objc private func updateChanged() {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.updateChanged() }
+            return
+        }
+        guard UpdateManager.shared.state == .available,
+              let release = UpdateManager.shared.latest,
+              UserDefaults.standard.string(forKey: "lastUpdateNotice") != release.version else { return }
+        UserDefaults.standard.set(release.version, forKey: "lastUpdateNotice")
+        toast(L("New version available"), action: L("Update")) { [weak self] in
+            self?.presentModal(UpdateViewController())
+        }
     }
 
     private var filesSelected: Bool { selectedViewController === filesTabs }

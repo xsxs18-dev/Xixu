@@ -2,6 +2,7 @@ import UIKit
 
 final class SettingsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private enum Row {
+        case update
         case toggle(String, String, UIColor, Bool, (Bool) -> Void)
         case accent
         case action(String, String, UIColor, Bool, () -> Void)
@@ -26,8 +27,11 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
         tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(tableView)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateChanged), name: .updateChanged, object: nil)
         build()
     }
+
+    @objc private func updateChanged() { build() }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -36,6 +40,7 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
 
     private func build() {
         var result: [Section] = []
+        result.append(Section(title: nil, footer: nil, rows: [.update]))
         result.append(Section(title: L("Browsing"), footer: nil, rows: [
             .toggle(L("Show Hidden Files"), "eye.fill", .systemGray, Prefs.showHidden) { Prefs.showHidden = $0 },
             .toggle(L("Folders on Top"), "folder.fill", .systemBlue, Prefs.foldersFirst) { Prefs.foldersFirst = $0 },
@@ -98,6 +103,23 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         switch sections[indexPath.section].rows[indexPath.row] {
+        case .update:
+            var c = UIListContentConfiguration.subtitleCell()
+            c.text = L("Software Update")
+            c.image = Icons.squircle("arrow.down.circle.fill", .systemBlue)
+            switch UpdateManager.shared.state {
+            case .available:
+                let version = UpdateManager.shared.latest?.version ?? ""
+                c.secondaryText = LF("New version available: %@", version)
+                c.secondaryTextProperties.color = .systemBlue
+            case .checking: c.secondaryText = L("Checking for updates…")
+            case .upToDate: c.secondaryText = L("Xixu is up to date.")
+            case .installed: c.secondaryText = L("Restart Xixu to finish")
+            case .failed: c.secondaryText = L("Tap to try again")
+            default: c.secondaryText = L("Check for Updates")
+            }
+            cell.contentConfiguration = c
+            cell.accessoryType = .disclosureIndicator
         case let .toggle(title, symbol, color, on, handler):
             var c = UIListContentConfiguration.cell()
             c.text = title
@@ -157,6 +179,8 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         switch sections[indexPath.section].rows[indexPath.row] {
+        case .update:
+            presentModal(UpdateViewController())
         case let .action(_, _, _, _, handler):
             handler()
         case let .value(_, value, mono) where mono:
