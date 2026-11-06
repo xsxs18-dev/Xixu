@@ -95,6 +95,10 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
     }
 
     @objc private func stateChanged() {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.stateChanged() }
+            return
+        }
         updateShelf()
         if !Activity.shared.jobs.isEmpty {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.updateShelf() }

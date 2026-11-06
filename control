@@ -1,6 +1,6 @@
 Package: com.xsxs18.xixu
 Name: Xixu
-Version: 1.1.3
+Version: 1.1.4
 Architecture: iphoneos-arm
 Description: A fast, clean root file manager.
  Browse the whole file system as root, edit text, property lists and

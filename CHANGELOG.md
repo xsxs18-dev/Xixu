@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+- Fixed the IPA installation crash shown in the iOS 18.4 crash report: activity updates now stay on the main actor, and the shelf never updates UIKit from a background thread.
+
 ## 1.1.3
 
 - Moved private LaunchServices calls and exception handling into Objective-C so exceptions cannot unwind through Swift after IPA installation.

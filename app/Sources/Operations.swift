@@ -15,7 +15,7 @@ final class Job {
     }
 }
 
-final class Activity {
+@MainActor final class Activity {
     static let shared = Activity()
     private(set) var jobs: [Job] = []
 
@@ -30,9 +30,11 @@ final class Activity {
             post()
         }
         return try await FS.shared.call(req) { [weak self] response in
-            if let p = response.progress { job.progress = p }
-            if let t = response.text, !t.isEmpty { job.detail = t }
-            self?.post()
+            Task { @MainActor in
+                if let p = response.progress { job.progress = p }
+                if let t = response.text, !t.isEmpty { job.detail = t }
+                self?.post()
+            }
         }
     }
 

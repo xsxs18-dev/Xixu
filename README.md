@@ -4,7 +4,7 @@
   <p><strong>File management for the iPhone you actually own.</strong></p>
   <p>A native file manager for rootless and roothide jailbreaks. Browse, move, inspect, edit, and recover files without leaving the app.</p>
   <p>
-    <a href="../../releases/latest"><img alt="Version 1.1.3" src="https://img.shields.io/badge/release-v1.1.3-5b5bd6?style=flat-square"></a>
+    <a href="../../releases/latest"><img alt="Version 1.1.4" src="https://img.shields.io/badge/release-v1.1.4-5b5bd6?style=flat-square"></a>
     <img alt="iOS 15–26" src="https://img.shields.io/badge/iOS-15%E2%80%9326-111827?style=flat-square">
     <img alt="Rootless and roothide" src="https://img.shields.io/badge/jailbreak-rootless%20%7C%20roothide-5058a5?style=flat-square">
     <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-2e7d65?style=flat-square"></a>
