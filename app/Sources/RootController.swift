@@ -25,12 +25,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: scene)
-        window.tintColor = Theme.accent
+        Theme.apply(to: window)
         window.rootViewController = RootController()
         window.makeKeyAndVisible()
         self.window = window
         NotificationCenter.default.addObserver(forName: .prefsChanged, object: nil, queue: .main) { [weak window] _ in
-            window?.tintColor = Theme.accent
+            if let window = window { Theme.apply(to: window) }
+            RootController.shared?.applyTheme()
         }
     }
 }
@@ -72,6 +73,7 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
         }
         viewControllers = [filesTabs, searchNav, appsNav, toolsNav, settingsNav]
         lastSelectedTab = filesTabs
+        applyTheme()
 
         shelf.translatesAutoresizingMaskIntoConstraints = false
         shelf.alpha = 0
@@ -111,6 +113,11 @@ final class RootController: UITabBarController, UITabBarControllerDelegate {
         if !Activity.shared.jobs.isEmpty {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.updateShelf() }
         }
+    }
+
+    func applyTheme() {
+        Theme.apply(to: tabBar)
+        for nav in filesTabs.allNavs + otherNavs { Theme.apply(to: nav) }
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {

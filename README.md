@@ -4,7 +4,7 @@
   <p><strong>File management for the iPhone you actually own.</strong></p>
   <p>A native file manager for rootless and roothide jailbreaks. Browse, move, inspect, edit, and recover files without leaving the app.</p>
   <p>
-    <a href="../../releases/latest"><img alt="Version 1.1.5" src="https://img.shields.io/badge/release-v1.1.5-5b5bd6?style=flat-square"></a>
+    <a href="../../releases/latest"><img alt="Version 1.2.0" src="https://img.shields.io/badge/release-v1.2.0-5b5bd6?style=flat-square"></a>
     <img alt="iOS 15–26" src="https://img.shields.io/badge/iOS-15%E2%80%9326-111827?style=flat-square">
     <img alt="Rootless and roothide" src="https://img.shields.io/badge/jailbreak-rootless%20%7C%20roothide-5058a5?style=flat-square">
     <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-2e7d65?style=flat-square"></a>
@@ -40,6 +40,19 @@ Xixu targets iOS 15–26. IPA installation needs TrollStore/TrollStore Lite or `
 | **Handle the tedious jobs** | Clean caches and logs, transfer files over Wi-Fi with a one-time code, install IPA/TIPA files, back up app data, and export apps as IPA. |
 
 The little details matter too: folders stay on top if you want them to, hidden files are a toggle, long operations show progress, and the helper runs only while Xixu is open. When a new version is available, a small in-app notice takes you straight to the updater.
+
+### Make it yours
+
+Open **Settings → Theme** to choose the look that fits your day:
+
+| Theme | Feel |
+| --- | --- |
+| **Xixu** | The original drawn file icons, with your choice of accent color. |
+| **iOS** | Native system colors and simple SF Symbol file icons. |
+| **macOS** | A light, Finder-inspired workspace with blue folders. |
+| **Linux** | A dark workspace with warm orange accents and folders. |
+
+Switching themes updates the app immediately. Xixu and iOS follow your iPhone's light or dark mode; macOS uses a light appearance and Linux uses a dark one.
 
 ### A few guardrails
 

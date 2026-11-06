@@ -58,6 +58,7 @@ final class ToolsViewController: UIViewController, UITableViewDataSource, UITabl
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        tableView.reloadData()
         if let selected = tableView.indexPathForSelectedRow { tableView.deselectRow(at: selected, animated: animated) }
     }
 

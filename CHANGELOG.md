@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+- Added four instant-switch themes: Xixu, iOS, macOS, and Linux.
+- The Xixu theme keeps the existing accent color picker; iOS uses native file symbols, macOS uses a light Finder-inspired palette, and Linux uses a dark orange palette.
+
 ## 1.1.5
 
 - Double tap the Files tab while browsing to return to its home page.

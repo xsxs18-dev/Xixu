@@ -25,6 +25,14 @@ enum Icons {
 
     /// Icon for a list row. `dark` follows the current interface style.
     static func file(_ item: FileItem, size: CGFloat = 34, dark: Bool) -> UIImage {
+        if Prefs.themeStyle == .ios {
+            let config = UIImage.SymbolConfiguration(pointSize: size * 0.74, weight: .regular)
+            let color: UIColor = item.isDirectory ? Theme.accent : .secondaryLabel
+            let symbol = item.isSymlink ? "arrow.turn.up.right" : item.kind.symbol
+            if let image = UIImage(systemName: symbol, withConfiguration: config) {
+                return image.withTintColor(color, renderingMode: .alwaysOriginal)
+            }
+        }
         let link = item.isSymlink
         if item.isDirectory {
             let color: UIColor = item.kind == .package ? .systemGray : Theme.accent

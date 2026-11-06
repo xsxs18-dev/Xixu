@@ -65,6 +65,7 @@ final class FilesTabsController: UIViewController {
     private func makeTab(path: String?) -> UINavigationController {
         let nav = UINavigationController(rootViewController: HomeViewController())
         nav.navigationBar.prefersLargeTitles = true
+        Theme.apply(to: nav)
         nav.delegate = navigationDelegate
         nav.additionalSafeAreaInsets.bottom = stripHeight + shelfInset
         if let path = path { Navigator.show(path, in: nav, animated: false) }

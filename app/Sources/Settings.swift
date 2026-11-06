@@ -4,6 +4,7 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
     private enum Row {
         case update
         case toggle(String, String, UIColor, Bool, (Bool) -> Void)
+        case theme
         case accent
         case action(String, String, UIColor, Bool, () -> Void)
         case value(String, String, Bool)
@@ -52,7 +53,9 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
             .toggle(L("Use Trash"), "trash.fill", .systemRed, Prefs.useTrash) { Prefs.useTrash = $0 },
             .action(L("Empty Trash…"), "xmark.bin.fill", .systemRed, true) { [weak self] in self?.emptyTrash() },
         ]))
-        result.append(Section(title: L("Appearance"), footer: nil, rows: [.accent]))
+        var appearance: [Row] = [.theme]
+        if Prefs.themeStyle == .xixu { appearance.append(.accent) }
+        result.append(Section(title: L("Appearance"), footer: nil, rows: appearance))
         let root = FS.shared.isRoot
         var status: [Row] = [
             .value(L("Access"), root ? L("Root") : L("Limited"), false),
@@ -103,6 +106,13 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         switch sections[indexPath.section].rows[indexPath.row] {
+        case .theme:
+            var c = UIListContentConfiguration.valueCell()
+            c.text = L("Theme")
+            c.secondaryText = Prefs.themeStyle.title
+            c.image = Icons.squircle("paintpalette.fill", .systemPurple)
+            cell.contentConfiguration = c
+            cell.accessoryType = .disclosureIndicator
         case .update:
             var c = UIListContentConfiguration.subtitleCell()
             c.text = L("Software Update")
@@ -179,6 +189,8 @@ final class SettingsViewController: UIViewController, UITableViewDataSource, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         switch sections[indexPath.section].rows[indexPath.row] {
+        case .theme:
+            navigationController?.pushViewController(ThemePickerViewController(), animated: true)
         case .update:
             presentModal(UpdateViewController())
         case let .action(_, _, _, _, handler):

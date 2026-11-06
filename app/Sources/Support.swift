@@ -34,6 +34,28 @@ enum SortKey: String, CaseIterable {
     }
 }
 
+enum ThemeStyle: String, CaseIterable {
+    case xixu, ios, macos, linux
+
+    var title: String {
+        switch self {
+        case .xixu: return "Xixu"
+        case .ios: return "iOS"
+        case .macos: return "macOS"
+        case .linux: return "Linux"
+        }
+    }
+
+    var detail: String {
+        switch self {
+        case .xixu: return L("The original Xixu look, with your accent color.")
+        case .ios: return L("Clean, familiar, and matched to your iPhone.")
+        case .macos: return L("A light Finder-inspired workspace.")
+        case .linux: return L("Dark, focused, and warm orange.")
+        }
+    }
+}
+
 enum Prefs {
     private static let d = UserDefaults.standard
 
@@ -48,6 +70,7 @@ enum Prefs {
             "showDetails": false,
             "useTrash": true,
             "accent": 0,
+            "themeStyle": ThemeStyle.xixu.rawValue,
             "editorFontSize": 13.0,
         ])
     }
@@ -64,6 +87,10 @@ enum Prefs {
     static var showDetails: Bool { get { d.bool(forKey: "showDetails") } set { set(newValue, "showDetails") } }
     static var useTrash: Bool { get { d.bool(forKey: "useTrash") } set { set(newValue, "useTrash") } }
     static var accent: Int { get { d.integer(forKey: "accent") } set { set(newValue, "accent") } }
+    static var themeStyle: ThemeStyle {
+        get { ThemeStyle(rawValue: d.string(forKey: "themeStyle") ?? "") ?? .xixu }
+        set { set(newValue.rawValue, "themeStyle") }
+    }
     static var editorFontSize: CGFloat {
         get { CGFloat(d.double(forKey: "editorFontSize")) }
         set { d.set(Double(newValue), forKey: "editorFontSize") }
@@ -119,8 +146,62 @@ enum Theme {
     ]
 
     static var accent: UIColor {
-        let i = Prefs.accent
-        return accents.indices.contains(i) ? accents[i].color : .systemBlue
+        switch Prefs.themeStyle {
+        case .xixu:
+            let i = Prefs.accent
+            return accents.indices.contains(i) ? accents[i].color : .systemBlue
+        case .ios: return .systemBlue
+        case .macos: return UIColor(red: 0.04, green: 0.43, blue: 0.91, alpha: 1)
+        case .linux: return UIColor(red: 0.91, green: 0.33, blue: 0.13, alpha: 1)
+        }
+    }
+
+    static var interfaceStyle: UIUserInterfaceStyle {
+        switch Prefs.themeStyle {
+        case .macos: return .light
+        case .linux: return .dark
+        case .xixu, .ios: return .unspecified
+        }
+    }
+
+    static var chromeColor: UIColor? {
+        switch Prefs.themeStyle {
+        case .macos: return UIColor(red: 0.93, green: 0.94, blue: 0.96, alpha: 1)
+        case .linux: return UIColor(red: 0.14, green: 0.13, blue: 0.17, alpha: 1)
+        case .xixu, .ios: return nil
+        }
+    }
+
+    static func apply(to window: UIWindow) {
+        window.overrideUserInterfaceStyle = interfaceStyle
+        window.tintColor = accent
+    }
+
+    static func apply(to navigation: UINavigationController) {
+        let appearance = UINavigationBarAppearance()
+        if let color = chromeColor {
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = color
+        } else {
+            appearance.configureWithDefaultBackground()
+        }
+        navigation.navigationBar.standardAppearance = appearance
+        navigation.navigationBar.scrollEdgeAppearance = appearance
+        navigation.navigationBar.compactAppearance = appearance
+        navigation.navigationBar.tintColor = accent
+    }
+
+    static func apply(to tabBar: UITabBar) {
+        let appearance = UITabBarAppearance()
+        if let color = chromeColor {
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = color
+        } else {
+            appearance.configureWithDefaultBackground()
+        }
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
+        tabBar.tintColor = accent
     }
 
     static func mono(_ size: CGFloat, _ weight: UIFont.Weight = .regular) -> UIFont {

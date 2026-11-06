@@ -22,6 +22,11 @@ final class SearchViewController: UIViewController, UITableViewDataSource, UITab
         set { UserDefaults.standard.set(Array(newValue.prefix(8)), forKey: "recentSearches") }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = L("Search")
