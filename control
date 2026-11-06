@@ -1,0 +1,14 @@
+Package: com.xsxs18.xixu
+Name: Xixu
+Version: 1.1.2
+Architecture: iphoneos-arm
+Description: A fast, clean root file manager.
+ Browse the whole file system as root, edit text, property lists and
+ binaries, inspect Mach-O files and entitlements, open SQLite databases,
+ extract and create archives, install packages and restore deleted items
+ from the Trash. Rootless and roothide, iOS 15 to 26.
+Maintainer: xsxs18
+Author: xsxs18
+Section: Applications
+Depends: firmware (>= 15.0)
+Recommends: uikittools
