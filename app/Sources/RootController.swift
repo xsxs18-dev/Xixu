@@ -7,7 +7,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         Prefs.register()
         Staging.cleanUp()
         DispatchQueue.global(qos: .userInitiated).async { _ = FS.shared }
-        DispatchQueue.global(qos: .utility).async { AppRegistry.shared.loadIfNeeded() }
         return true
     }
 

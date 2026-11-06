@@ -68,22 +68,9 @@ final class AppRegistry {
     }
 
     private func enumerate() -> [App] {
-        var proxies: [NSObject] = []
-        _ = XXTry({
-            guard let cls = NSClassFromString("LSApplicationWorkspace") as? NSObject.Type,
-                  cls.responds(to: NSSelectorFromString("defaultWorkspace")),
-                  let workspace = cls.perform(NSSelectorFromString("defaultWorkspace"))?.takeUnretainedValue() as? NSObject,
-                  workspace.responds(to: NSSelectorFromString("allInstalledApplications")),
-                  let list = workspace.perform(NSSelectorFromString("allInstalledApplications"))?.takeUnretainedValue() as? [NSObject]
-            else { return }
-            proxies = list
-        }, nil)
-
         var found: [App] = []
-        for proxy in proxies {
-            var app: App?
-            // A proxy of an app that is being installed can throw from its getters; skip it.
-            _ = XXTry({ app = self.makeApp(proxy) }, nil)
+        for proxy in XXInstalledApplications() {
+            let app = makeApp(proxy)
             if let app = app { found.append(app) }
         }
         found.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
@@ -107,8 +94,7 @@ final class AppRegistry {
     }
 
     private func value(_ object: NSObject, _ key: String) -> Any? {
-        guard object.responds(to: NSSelectorFromString(key)) else { return nil }
-        return object.value(forKey: key)
+        XXSafeValueForKey(object, key)
     }
 
     // MARK: - Icons
@@ -120,11 +106,6 @@ final class AppRegistry {
     }
 
     func open(_ bundleID: String) {
-        guard let cls = NSClassFromString("LSApplicationWorkspace") as? NSObject.Type,
-              let workspace = cls.perform(NSSelectorFromString("defaultWorkspace"))?.takeUnretainedValue() as? NSObject else { return }
-        let selector = NSSelectorFromString("openApplicationWithBundleID:")
-        if workspace.responds(to: selector) {
-            _ = XXTry({ _ = workspace.perform(selector, with: bundleID) }, nil)
-        }
+        _ = XXOpenApplication(bundleID)
     }
 }

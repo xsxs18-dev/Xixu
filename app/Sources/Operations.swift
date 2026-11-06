@@ -339,7 +339,6 @@ enum Ops {
                     let method = response.strings?.first ?? ""
                     if response.numbers?.first == 0 {
                         Haptics.success()
-                        AppRegistry.shared.reload()
                         RootController.shared?.toast(LF("Installed with %@", method))
                     } else {
                         Haptics.error()

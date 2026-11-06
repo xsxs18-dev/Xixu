@@ -81,6 +81,8 @@ void archive_entry_set_size(struct archive_entry *, int64_t);
 mode_t archive_entry_filetype(struct archive_entry *);
 time_t archive_entry_mtime(struct archive_entry *);
 
-#pragma mark - Exception guard (app only, Guard.m)
+#pragma mark - LaunchServices exception guards (app only, Guard.m)
 
-BOOL XXTry(void (NS_NOESCAPE ^ _Nonnull block)(void), NSString * _Nullable * _Nullable reason);
+NSArray<NSObject *> * _Nonnull XXInstalledApplications(void);
+id _Nullable XXSafeValueForKey(NSObject * _Nonnull object, NSString * _Nonnull key);
+BOOL XXOpenApplication(NSString * _Nonnull bundleID);

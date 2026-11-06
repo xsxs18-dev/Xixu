@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.3
+
+- Moved private LaunchServices calls and exception handling into Objective-C so exceptions cannot unwind through Swift after IPA installation.
+- Stopped background app-list reads on startup and immediately after installation, when LaunchServices may be changing.
+- Rewrote the README with a clearer start guide, feature overview, and troubleshooting notes.
+
 ## 1.1.2
 
 - Avoided stack exhaustion and large temporary allocations while cleaning deep or busy cache trees.
